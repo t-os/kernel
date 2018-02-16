@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.1)
 project(tos VERSION 1.0.0 LANGUAGES NONE)
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/linker.ld)
 
-set(CMAKE_C_FLAGS "-std=gnu99 -ffreestanding -g")
+set(CMAKE_C_FLAGS "-O2 -std=gnu99 -ffreestanding -g")
 set(CMAKE_CXX_FLAGS ${CMAKE_C_FLAGS})
 set(CFLAGS ${CMAKE_C_FLAGS})
 set(CXXFLAGS ${CMAKE_C_FLAGS})
@@ -25,7 +25,10 @@ include_directories(${CMAKE_SOURCE_DIR})
 message("${INCLUDE_DIRECTORIES}")
 add_executable(kernel.elf
 	start.s
+	common/common.c
 	display/vga.c
+	serial/serial.c
+	serial/serial-debugging.c
 	kernel.c
 )
 

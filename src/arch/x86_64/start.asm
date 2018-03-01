@@ -135,6 +135,9 @@ start:
 	call check_long_mode
 	mov dword [0xb8000], 0x2f6f2f63
 	call set_up_page_tables
+	mov eax, p4_table
+	or eax, 0b11
+	mov [p4_table + 511 * 8], eax
 	mov dword [0xb8000], 0x2f6f2f64
 	call enable_paging
 	mov dword [0xb8000], 0x2f6f2f65

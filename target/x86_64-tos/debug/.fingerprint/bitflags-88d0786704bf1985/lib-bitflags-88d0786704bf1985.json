@@ -1,0 +1,1 @@
+{"rustc":9051232337167469745,"features":"[\"no_std\"]","target":12884309030029234538,"profile":4513376542218014594,"path":818393741345763336,"deps":[],"local":[{"Precalculated":"0.4.0"}],"rustflags":["--sysroot","/home/tom/.xargo"]}

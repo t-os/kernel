@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-// Deadly port_io 
+// Deadly port_io
 
 pub unsafe fn outb(port: u16, val: u8)
 {

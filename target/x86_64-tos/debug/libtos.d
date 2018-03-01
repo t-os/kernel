@@ -1,1 +1,0 @@
-/mnt/d/Desktop/osdev/code/target/x86_64-tos/debug/libtos.a: /mnt/d/Desktop/osdev/code/src/lib.rs /mnt/d/Desktop/osdev/code/src/io/serial.rs /mnt/d/Desktop/osdev/code/src/io/vga_buffer.rs /mnt/d/Desktop/osdev/code/src/io/mod.rs /mnt/d/Desktop/osdev/code/src/debug.rs /mnt/d/Desktop/osdev/code/src/io/port_io.rs

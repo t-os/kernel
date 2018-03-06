@@ -10,7 +10,7 @@ assembly_source_files := $(wildcard src/arch/$(arch)/*.asm)
 assembly_object_files := $(patsubst src/arch/$(arch)/%.asm, \
 	build/arch/$(arch)/%.o, $(assembly_source_files))
 
-.PHONY: all clean run iso kernel
+.PHONY: all clean run iso kernel gdb
 
 all: $(kernel)
 
@@ -18,13 +18,19 @@ clean:
 	@rm -r build
 
 run: $(iso)
-	@qemu-system-x86_64 -cdrom $(iso)
+	@qemu-system-x86_64.exe -cdrom $(iso) -s
+
+debug: $(iso)
+	@qemu-system-x86_64.exe -cdrom $(iso) -s -S
+
+gdb:
+	@rust-gdb "build/kernel.elf" -ex "target remote :1234"	
 
 iso: $(iso)
 
 $(iso): $(kernel) $(grub_cfg)
 	@mkdir -p build/isofiles/boot/grub
-	@cp $(kernel) build/isofiles/boot/kernel.bin
+	@cp $(kernel) build/isofiles/boot/kernel.elf
 	@cp $(grub_cfg) build/isofiles/boot/grub
 	@grub-mkrescue -o $(iso) build/isofiles 2> /dev/null
 	@rm -r build/isofiles

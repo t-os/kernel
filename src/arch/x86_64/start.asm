@@ -165,5 +165,5 @@ p3_table:
 p2_table:
     resb 4096
 stack_bottom:
-	resb 16384 ; reserve 16 kilobytes for stack
+	resb 4096 * 4 ; reserve 16 kilobytes for stack
 stack_top:

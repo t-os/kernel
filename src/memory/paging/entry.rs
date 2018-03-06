@@ -1,26 +1,11 @@
 use memory::Frame;
-pub struct Page {
-    number: usize,
-}
-
-impl Page {
-    pub fn containing_address(address: VirtualAddress) -> Page {
-        assert!(address < 0x0000_8000_0000_0000 ||
-            address >= 0xffff_8000_0000_0000,
-            "invalid address: 0x{:x}", address);
-        Page { number: address / PAGE_SIZE }
-    }
-
-    fn start_address(&self) -> usize {
-        self.number * PAGE_SIZE
-    }
-}
+use multiboot2::ElfSection;
 
 pub struct Entry(u64);
 
 impl Entry {
     pub fn is_unused(&self) -> bool {
-        return self.0 == 0;
+        self.0 == 0
     }
 
     pub fn set_unused(&mut self) {
@@ -28,14 +13,16 @@ impl Entry {
     }
 
     pub fn flags(&self) -> EntryFlags {
-        return EntryFlags::from_bits_truncate(self.0);
+        EntryFlags::from_bits_truncate(self.0)
     }
 
     pub fn pointed_frame(&self) -> Option<Frame> {
         if self.flags().contains(PRESENT) {
-            return Some(Frame::containing_address(self.0 as usize & 0x000fffff_fffff000));
+            Some(Frame::containing_address(
+                self.0 as usize & 0x000fffff_fffff000
+            ))
         } else {
-            return None;
+            None
         }
     }
 
@@ -45,18 +32,40 @@ impl Entry {
     }
 }
 
-bitflags!{
-    pub struct EntryFlags: u64 {
-        const PRESENT =         1 << 0;
-        const WRITABLE =        1 << 1;
-        const USER_ACCESSIBLE = 1 << 2;
-        const WRITE_THROUGH =   1 << 3;
-        const NO_CACHE =        1 << 4;
-        const ACCESSED =        1 << 5;
-        const DIRTY =           1 << 6;
-        const HUGE_PAGE =       1 << 7;
-        const GLOBAL =          1 << 8;
-        const NO_EXECUTE =      1 << 63;
+bitflags! {
+    pub flags EntryFlags: u64 {
+        const PRESENT =         1 << 0,
+        const WRITABLE =        1 << 1,
+        const USER_ACCESSIBLE = 1 << 2,
+        const WRITE_THROUGH =   1 << 3,
+        const NO_CACHE =        1 << 4,
+        const ACCESSED =        1 << 5,
+        const DIRTY =           1 << 6,
+        const HUGE_PAGE =       1 << 7,
+        const GLOBAL =          1 << 8,
+        const NO_EXECUTE =      1 << 63,
     }
+}
 
+
+impl EntryFlags {
+    pub fn from_elf_section_flags(section: &ElfSection) -> EntryFlags {
+        use multiboot2::{ELF_SECTION_ALLOCATED, ELF_SECTION_WRITABLE,
+            ELF_SECTION_EXECUTABLE};
+
+        let mut flags = EntryFlags::empty();
+
+        if section.flags().contains(ELF_SECTION_ALLOCATED) {
+            // section is loaded to memory
+            flags = flags | PRESENT;
+        }
+        if section.flags().contains(ELF_SECTION_WRITABLE) {
+            flags = flags | WRITABLE;
+        }
+        if !section.flags().contains(ELF_SECTION_EXECUTABLE) {
+            flags = flags | NO_EXECUTE;
+        }
+
+        flags
+    }
 }

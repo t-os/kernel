@@ -38,4 +38,4 @@ build/arch/$(arch)/%.o: src/arch/$(arch)/%.asm
 	@nasm -felf64 $< -o $@
 	
 kernel:
-	@xargo build --target $(target)
+	@RUST_TARGET_PATH=$(shell pwd) xargo build --target $(target)

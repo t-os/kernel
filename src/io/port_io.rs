@@ -41,13 +41,6 @@ impl <T: InOut> Port<T> {
 }
 
 
-
-
-
-
-
-
-// Deadly port_io 
 pub unsafe fn outb(port: u16, val: u8)
 {
 	asm!("outb $0, $1" : : "{al}"(val), "{dx}N"(port));
@@ -88,3 +81,4 @@ pub unsafe fn inl(port: u16) -> u32
 	asm!("inl $1, $0" : "={eax}"(ret) : "{dx}N"(port));
 	return ret;
 }
+
